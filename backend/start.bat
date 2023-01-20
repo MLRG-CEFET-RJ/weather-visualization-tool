@@ -1,1 +1,1 @@
-uvicorn src.main:app --reload
+python src/__init__.py
