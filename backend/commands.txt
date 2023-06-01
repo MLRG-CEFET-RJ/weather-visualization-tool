@@ -1,0 +1,12 @@
+cd backend
+cd landing
+
+pip install s3fs
+pip install xarray
+pip install datetime
+pip install netcdf4
+pip install h5netcdf
+pip install pandas
+pip install geopandas
+
+python TPWF.py --data_inicial 2021-12-29 --data_final 2022-01-01

@@ -1,0 +1,16 @@
+name: wvtool
+channels:
+  - pytorch
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+    - pip
+    - pip:    
+      - s3fs
+      - xarray
+      - datetime
+      - netcdf4
+      - h5netcdf
+      - pandas
+      - geopandas
