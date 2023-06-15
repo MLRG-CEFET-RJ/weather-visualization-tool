@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from timeit import default_timer as timer
+import os
+import netCDF4
 
 fs = s3fs.S3FileSystem(anon=True)
 # Get products of GOES-16 bucket.
@@ -33,6 +35,12 @@ args = parser.parse_args()
 start_date = args.data_inicial
 end_date = args.data_final
 #até aqui
+# Verificar se os argumentos foram fornecidos e atribuir um valor padrão, se necessário
+if start_date is None:
+    start_date = dt.date.today()
+if end_date is None:
+    end_date = dt.date.today()
+
 data_year_current = start_date.year
 if start_date == end_date:
     days_traveled = 0
@@ -47,19 +55,28 @@ for dsp in range(days_traveled + 1):
     year_for_days_current = str(year_for_days + add_days)
     for hours in range(24):
         target = f'noaa-goes16/{product}/{data_year_current}/{year_for_days_current}/{str(hours)}'
+        print(target)
         files = np.array(fs.ls(target))
         if len(files) > 0:
             for i in range(len(files)):
-                print(files)
                 filename = files[i].split('/')[-1]
+                print(f"Baixando arquivo: {filename}")
                 fs.get(files[i], filename)
-                ds = xr.open_dataset(filename)
+                try:
+                    ds = xr.open_dataset(filename)
+                    # Fazer o que você precisa com o dataset aqui
+                    print(ds)
+                    ds.close()
+                except Exception as e:
+                    print(f"Erro ao abrir o arquivo {filename}: {str(e)}")
+
 
 if ds is not None:
     print(ds)
 else:
     print("Nenhum arquivo válido encontrado.")
-
+    
+os.remove(filename)
 # Define bounding box coordinates
 #lat_min, lat_max = -23.082616, -22.76894
 #lon_min, lon_max = -43.823426, -43.154634
